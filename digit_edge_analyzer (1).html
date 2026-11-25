@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#07111f"><title>Digit Edge Analyzer</title>
+<style>
+:root{--bg:#07111f;--panel:#0e1b2d;--panel2:#12243a;--line:#213750;--text:#e9f2ff;--muted:#8ca4bf;--cyan:#42d9e8;--green:#43e0a0;--red:#ff7185;--gold:#f8c768}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#102640 0,#07111f 55%);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}main{max-width:850px;margin:auto;padding:16px 14px 34px}.head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:6px 0 18px}.brand{font-weight:850;font-size:20px;letter-spacing:.2px}.brand span{color:var(--cyan)}.pill{border:1px solid var(--line);border-radius:99px;padding:6px 10px;font-size:12px;color:var(--muted)}.status{display:inline-block;width:8px;height:8px;border-radius:50%;background:#687c91;margin-right:6px}.status.live{background:var(--green);box-shadow:0 0 10px #43e0a066}.hero{background:linear-gradient(135deg,#10243a,#0d1a2b);border:1px solid var(--line);border-radius:20px;padding:17px;margin-bottom:13px}.heroTop{display:flex;justify-content:space-between;gap:10px;align-items:center}.hero h1{font-size:17px;margin:0}.sub{color:var(--muted);font-size:12px;margin-top:4px}.controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}select,input,textarea{width:100%;background:#071525;border:1px solid #2a425d;color:var(--text);border-radius:11px;padding:11px;font:inherit;outline:none}button{border:0;border-radius:12px;padding:12px 14px;font-weight:750;font-size:14px;cursor:pointer;background:var(--cyan);color:#06131f}button.secondary{background:#1a3048;color:var(--text);border:1px solid #2b4663}button.warn{background:#382338;color:#ffb9c4;border:1px solid #65404c}.buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.buttons button{flex:1;min-width:115px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin:13px 0}.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:14px}.metric{font-size:27px;font-weight:850;letter-spacing:-.7px}.metric small{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:0}.muted{color:var(--muted)}.section{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:15px;margin:12px 0}.section h2{font-size:15px;margin:0 0 12px}.digits{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}.digit{background:#15283e;border:1px solid #263f59;border-radius:9px;text-align:center;padding:8px 0;font-weight:750;font-size:13px}.digit b{display:block;font-size:10px;color:var(--muted);font-weight:600}.digit.hot{border-color:var(--cyan);background:#163747;color:var(--cyan)}.barrow{display:grid;grid-template-columns:20px 1fr 42px;gap:8px;align-items:center;margin:8px 0;font-size:12px}.bar{height:8px;background:#1b3047;border-radius:8px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#2ca7c4,var(--cyan));border-radius:8px}.signal{display:flex;align-items:center;gap:13px}.bigdigit{width:62px;height:62px;border-radius:16px;background:#163747;border:1px solid #2c6574;color:var(--cyan);font-size:34px;font-weight:900;display:grid;place-items:center}.signal strong{font-size:16px}.signal .sub{margin-top:3px}.notice{font-size:12px;color:var(--gold);background:#332b1b;border:1px solid #51452a;border-radius:11px;padding:10px;margin-top:12px}.foot{font-size:11px;color:#7891ab;text-align:center;margin:20px 5px}.smallbtn{padding:8px 10px;font-size:12px}.recent{font-family:ui-monospace,monospace;word-break:break-all;color:#b8d0e8;line-height:1.8}.hidden{display:none}.full{grid-column:1/-1}.importrow{display:flex;gap:8px}.importrow button{white-space:nowrap}
+@media(min-width:650px){.grid{grid-template-columns:repeat(4,1fr)}.controls{grid-template-columns:repeat(3,1fr)}}
+</style></head>
+<body><main>
+<div class="head"><div class="brand">DIGIT <span>EDGE</span></div><div class="pill"><i class="status" id="dot"></i><span id="conn">Disconnected</span></div></div>
+<div class="hero">
+<div class="heroTop"><div><h1>Deriv Digit Analyzer</h1><div class="sub">Live digit statistics • Matches / Differs research</div></div><div class="pill" id="feed">Public feed</div></div>
+<div class="controls">
+<div><label>Market</label><select id="market"><option value="1HZ100V">Volatility 100 (1s)</option><option value="R_100">Volatility 100</option><option value="1HZ75V">Volatility 75 (1s)</option><option value="R_75">Volatility 75</option><option value="1HZ50V">Volatility 50 (1s)</option><option value="R_50">Volatility 50</option><option value="1HZ25V">Volatility 25 (1s)</option><option value="R_25">Volatility 25</option><option value="1HZ10V">Volatility 10 (1s)</option><option value="R_10">Volatility 10</option></select></div>
+<div><label>Analyze last</label><select id="window"><option value="100">100 ticks</option><option value="250">250 ticks</option><option value="500" selected>500 ticks</option><option value="1000">1000 ticks</option></select></div>
+<div><label>Target digit</label><select id="target"><option value="auto">Auto: strongest estimate</option><option value="0">Digit 0</option><option value="1">Digit 1</option><option value="2">Digit 2</option><option value="3">Digit 3</option><option value="4">Digit 4</option><option value="5">Digit 5</option><option value="6">Digit 6</option><option value="7">Digit 7</option><option value="8">Digit 8</option><option value="9">Digit 9</option></select></div>
+</div>
+<div class="buttons"><button id="connect">Connect live feed</button><button class="secondary" id="analyze">Analyze now</button><button class="secondary" id="stop">Disconnect</button></div>
+<div class="sub" id="feednote">Connect to receive live prices. Public market data only; no account login required.</div>
+</div>
+<div class="grid">
+<div class="card"><label>Last digit</label><div class="metric" id="last">—</div><div class="sub" id="price">Waiting for tick</div></div>
+<div class="card"><label>Ticks collected</label><div class="metric" id="count">0</div><div class="sub">Current session</div></div>
+<div class="card"><label>Top digit frequency</label><div class="metric" id="topfreq">—</div><div class="sub">In selected sample</div></div>
+<div class="card"><label>Uniformity test</label><div class="metric" id="chi">—</div><div class="sub" id="chiSub">Needs sample</div></div>
+</div>
+<div class="section"><h2>Signal summary</h2><div class="signal"><div class="bigdigit" id="signalDigit">—</div><div><strong id="signalTitle">Waiting for data</strong><div class="sub" id="signalDesc">Connect and collect tick digits to analyze.</div></div></div><div class="notice" id="risk">No prediction is guaranteed. Statistical estimates are not proof of a future edge.</div></div>
+<div class="section"><h2>Digit distribution <span class="muted" id="sampleLabel"></span></h2><div class="digits" id="digittiles"></div><div id="bars"></div></div>
+<div class="section"><h2>Recent digit stream</h2><div class="recent" id="recent">—</div></div>
+<div class="section"><h2>Analyze pasted digits (optional)</h2><div class="sub" style="margin:0 0 10px">Paste digit history from a source you trust. The analyzer accepts digits 0–9 and ignores other characters.</div><textarea id="manual" rows="3" placeholder="Example: 712408193..."></textarea><div class="buttons"><button class="secondary" id="useManual">Analyze pasted digits</button><button class="secondary" id="clearManual">Clear</button></div></div>
+<div class="section"><h2>How the score works</h2><div class="sub" style="font-size:13px">Bayesian smoothing (Jeffreys prior) reduces overreaction to small samples. Recent frequency is compared with the 10% equal-digit baseline; streaks and a chi-square uniformity check are shown as context. The highest estimated digit is only a candidate, not a reliable next-tick forecast. No martingale, auto-trading, or account credentials.</div><div class="buttons"><button class="secondary smallbtn" id="export">Export digits CSV</button><button class="secondary smallbtn" id="reset">Reset session</button></div></div>
+<div class="foot">Digit Edge Analyzer • Educational statistical tool • Not affiliated with Deriv</div>
+</main>
+<script>
+(()=> {
+const $=id=>document.getElementById(id);
+let ws=null, subId=null, digits=[], prices=[], times=[], live=false, manualMode=false;
+const MAX=3000;
+function setStatus(text,on=false){$('conn').textContent=text;$('dot').className='status'+(on?' live':'');}
+function send(obj){if(ws&&ws.readyState===1)ws.send(JSON.stringify(obj));}
+function digitFromQuote(q,pip){let s=Number(q).toFixed(Number(pip));let d=s.replace(/\D/g,'');return Number(d.slice(-1));}
+function connect(){
+ disconnect(false); digits=[];prices=[];times=[];manualMode=false; render();
+ setStatus('Connecting…');$('feednote').textContent='Opening Deriv public market-data connection…';
+ try{ws=new WebSocket('wss://api.derivws.com/trading/v1/options/ws/public');}
+ catch(e){setStatus('Connection failed');$('feednote').textContent='WebSocket unavailable in this browser/network.';return;}
+ ws.onopen=()=>{live=true;setStatus('Connected',true);$('feednote').textContent='Loading recent ticks and subscribing to live prices…';
+ const symbol=$('market').value;
+ send({ticks_history:symbol,count:500,end:'latest',style:'ticks',req_id:11});
+ send({ticks:symbol,subscribe:1,req_id:12});
+ };
+ ws.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch{return}
+ if(d.error){$('feednote').textContent='API: '+d.error.message;return}
+ if(d.msg_type==='history'&&d.history?.prices){
+ const p=d.history.prices, pip=d.pip_size??2;
+ for(let i=0;i<p.length;i++){addTick(p[i],pip,d.history.times?.[i],true)}
+ render();
+ }
+ if(d.msg_type==='tick'&&d.tick){if(d.subscription?.id)subId=d.subscription.id;addTick(d.tick.quote,d.tick.pip_size,d.tick.epoch,false);render();}
+ };
+ ws.onerror=()=>{$('feednote').textContent='Connection error. Try again or check your network.';setStatus('Error');};
+ ws.onclose=()=>{live=false;setStatus('Disconnected');};
+}
+function addTick(q,pip,epoch,history){
+ const d=digitFromQuote(q,pip);
+ if(!Number.isFinite(d)||d<0||d>9)return;
+ // Avoid duplicate latest history tick if stream immediately repeats it
+ if(history&&times.length&&epoch&&times[times.length-1]===epoch)return;
+ digits.push(d);prices.push(Number(q));times.push(epoch||Math.floor(Date.now()/1000));
+ if(digits.length>MAX){digits.shift();prices.shift();times.shift();}
+}
+function disconnect(update=true){if(ws){try{if(subId)send({forget:subId});ws.close()}catch{}ws=null;}subId=null;live=false;if(update)setStatus('Disconnected');}
+function stats(arr){
+ let n=arr.length, counts=Array(10).fill(0);arr.forEach(d=>counts[d]++);
+ const alpha=.5, total=n+10*alpha, post=counts.map(c=>(c+alpha)/total);
+ let top=post.indexOf(Math.max(...post)), chi=0;
+ if(n>0)counts.forEach(c=>chi+=(c-n/10)**2/(n/10));
+ let maxCount=Math.max(...counts), topObserved=counts.indexOf(maxCount);
+ let streak=0;if(n){for(let i=n-1;i>=0&&arr[i]===arr[n-1];i--)streak++}
+ // z score vs 10% baseline; descriptive only, not predictive guarantee
+ const z= n>0 ? counts.map(c=>(c-n/10)/Math.sqrt(n*.1*.9)) : Array(10).fill(0);
+ return {n,counts,post,top,chi,topObserved,streak,z};
+}
+function render(){
+ $('count').textContent=digits.length;
+ const w=Number($('window').value), arr=digits.slice(-w), s=stats(arr);
+ $('sampleLabel').textContent='('+arr.length+' ticks)';
+ $('last').textContent=digits.length?digits[digits.length-1]:'—';
+ $('price').textContent=prices.length?prices[prices.length-1].toFixed(2)+' • latest quote':'Waiting for tick';
+ $('topfreq').textContent=arr.length?(s.counts[s.topObserved]/arr.length*100).toFixed(1)+'%':'—';
+ $('chi').textContent=arr.length?s.chi.toFixed(1):'—';
+ $('chiSub').textContent=arr.length<100?'Small sample; weak test':'χ² vs equal 10% digits (descriptive)';
+ const target=$('target').value==='auto'?s.top:Number($('target').value);
+ const observed=arr.length?s.counts[target]/arr.length:0;
+ const estimate=s.post[target]*100;
+ $('signalDigit').textContent=arr.length?target:'—';
+ $('signalTitle').textContent=arr.length?`Digit ${target} • estimated ${estimate.toFixed(1)}%`:'Waiting for data';
+ const candidate=arr.length>=100 && s.post[target]>.1 && s.z[target]>=1.5;
+ $('signalDesc').textContent=arr.length?`Observed ${(observed*100).toFixed(1)}% • baseline 10% • streak ${s.streak} • ${candidate?'unusual sample deviation':'no clear statistical edge'}`:'Connect and collect tick digits to analyze.';
+ $('risk').textContent=arr.length<100?'Collect at least 100 ticks for a more meaningful descriptive sample. Even large samples do not make the next digit predictable.':candidate?'Candidate digit has elevated sample frequency; this may be random noise and is not a validated trade signal.':'No strong frequency deviation detected. Avoid treating the top digit as a guaranteed match.';
+ const tiles=$('digittiles');tiles.innerHTML='';
+ for(let i=0;i<10;i++){let el=document.createElement('div');el.className='digit'+(i===s.top?' hot':'');el.innerHTML=`${i}<b>${arr.length?(s.counts[i]/arr.length*100).toFixed(0)+'%':'—'}</b>`;tiles.appendChild(el);}
+ const bars=$('bars');bars.innerHTML='';
+ for(let i=0;i<10;i++){let row=document.createElement('div');row.className='barrow';row.innerHTML=`<b>${i}</b><div class="bar"><i style="width:${Math.min(100,s.counts[i]/Math.max(1,arr.length)*100*3)}%"></i></div><span>${s.counts[i]} / ${s.post[i]?(s.post[i]*100).toFixed(1):'0'}%</span>`;bars.appendChild(row);}
+ $('recent').textContent=digits.slice(-80).join(' ')||'—';
+}
+$('connect').onclick=connect;$('stop').onclick=()=>disconnect();$('analyze').onclick=render;
+$('market').onchange=()=>{if(live)connect();else render()};$('window').onchange=render;$('target').onchange=render;
+$('useManual').onclick=()=>{let arr=$('manual').value.match(/[0-9]/g)||[];if(!arr.length){$('signalTitle').textContent='No digits found';return}disconnect(false);digits=arr.map(Number).slice(-MAX);prices=[];times=[];manualMode=true;setStatus('Pasted sample');$('feednote').textContent=`Analyzing ${digits.length} pasted digits. Connect live feed to resume.`;render()};
+$('clearManual').onclick=()=>{$('manual').value=''};
+$('reset').onclick=()=>{digits=[];prices=[];times=[];render();};
+$('export').onclick=()=>{let csv='index,digit,quote,epoch\\n'+digits.map((d,i)=>`${i+1},${d},${prices[i]??''},${times[i]??''}`).join('\\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='digit-edge-history.csv';a.click();URL.revokeObjectURL(a.href)};
+render();
+})();
+</script></body></html>
